@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PAX ROMA — Ogame İttifakı</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:        #C9A84C;
+      --gold-light:  #F0D080;
+      --gold-dim:    #8B6914;
+      --crimson:     #8B1A1A;
+      --crimson-deep:#5C0A0A;
+      --ivory:       #F5EDD6;
+      --parchment:   #E8D9B0;
+      --marble:      #D4C9B0;
+      --dark:        #0D0906;
+      --dark-mid:    #1A1108;
+      --dark-panel:  #110D05;
+      --shadow:      rgba(0,0,0,0.85);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--dark);
+      color: var(--ivory);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--dark); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+      overflow: hidden;
+    }
+
+    /* Radial glow background */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 40%, rgba(139,26,26,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 80% 60% at 50% 100%, rgba(201,168,76,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Animated star field */
+    .stars {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: var(--gold-light);
+      border-radius: 50%;
+      animation: twinkle var(--d, 4s) ease-in-out infinite;
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0; transform: scale(1); }
+      50%      { opacity: var(--o, 0.6); transform: scale(1.4); }
+    }
+
+    /* Decorative horizontal rules */
+    .hero-rule {
+      width: min(600px, 90vw);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 18px auto;
+      position: relative;
+    }
+    .hero-rule::before, .hero-rule::after {
+      content: '✦';
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      color: var(--gold);
+      font-size: 10px;
+      line-height: 1;
+    }
+    .hero-rule::before { left: 30px; }
+    .hero-rule::after  { right: 30px; }
+
+    .hero-eagle {
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      margin-bottom: 8px;
+      animation: descend 1.2s cubic-bezier(.22,.68,0,1.2) both;
+      filter: drop-shadow(0 0 30px rgba(201,168,76,0.5));
+    }
+    @keyframes descend {
+      from { opacity: 0; transform: translateY(-40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-subtitle-top {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.65rem, 1.8vw, 0.85rem);
+      letter-spacing: 0.35em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      animation: fadeUp 1s 0.3s both;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.8rem, 9vw, 7rem);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dim) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      margin: 8px 0;
+      animation: fadeUp 1s 0.5s both;
+    }
+
+    .hero-latin {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.7rem, 2vw, 0.95rem);
+      letter-spacing: 0.28em;
+      color: var(--gold);
+      opacity: 0.7;
+      text-transform: uppercase;
+      animation: fadeUp 1s 0.7s both;
+    }
+
+    .hero-motto {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      color: var(--ivory);
+      opacity: 0.85;
+      max-width: 600px;
+      margin: 10px auto 0;
+      animation: fadeUp 1s 0.9s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+      animation: fadeUp 1s 1.1s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BUTTON ── */
+    .btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 36px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s, background 0.3s;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+    .btn:hover { color: var(--dark); }
+    .btn:hover::before { transform: scaleX(1); }
+    .btn span { position: relative; z-index: 1; }
+
+    .btn-crimson {
+      border-color: var(--crimson);
+      color: var(--parchment);
+    }
+    .btn-crimson::before { background: var(--crimson); }
+    .btn-crimson:hover { color: var(--ivory); }
+
+    /* ══════════════════════════════════════
+       NAV
+    ══════════════════════════════════════ */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,9,6,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+      padding: 0 30px;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--marble);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* ══════════════════════════════════════
+       SECTIONS
+    ══════════════════════════════════════ */
+    section {
+      padding: 100px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 70px;
+    }
+    .section-overline {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      display: block;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      color: var(--gold);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+    .section-divider::before, .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim));
+    }
+    .section-divider::after { background: linear-gradient(90deg, var(--gold-dim), transparent); }
+    .divider-gem {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       HISTORIA (About)
+    ══════════════════════════════════════ */
+    #historia {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 100px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .historia-text h2 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .historia-text .overline {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      display: block;
+      margin-bottom: 16px;
+    }
+    .historia-text p {
+      color: var(--parchment);
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    .historia-text p em {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+
+    .historia-emblem {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .emblem-ring {
+      width: min(360px, 80vw);
+      height: min(360px, 80vw);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 50%;
+      position: absolute;
+      animation: spin 30s linear infinite;
+    }
+    .emblem-ring:nth-child(2) {
+      width: min(300px, 66vw);
+      height: min(300px, 66vw);
+      border-color: rgba(201,168,76,0.15);
+      animation-direction: reverse;
+      animation-duration: 20s;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .emblem-core {
+      position: relative;
+      width: min(240px, 52vw);
+      height: min(240px, 52vw);
+      background: radial-gradient(circle, rgba(139,26,26,0.3) 0%, rgba(13,9,6,0.9) 70%);
+      border-radius: 50%;
+      border: 2px solid var(--gold-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(5rem, 12vw, 8rem);
+      filter: drop-shadow(0 0 40px rgba(201,168,76,0.3));
+    }
+
+    /* ══════════════════════════════════════
+       STATS
+    ══════════════════════════════════════ */
+    .stats-strip {
+      background: var(--dark-panel);
+      border-top: 1px solid rgba(201,168,76,0.15);
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      padding: 60px 20px;
+    }
+    .stats-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      text-align: center;
+    }
+    .stat-item {}
+    .stat-number {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+    }
+    .stat-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      display: block;
+      margin-top: 8px;
+    }
+    .stat-divider {
+      width: 1px;
+      background: rgba(201,168,76,0.15);
+      margin: auto;
+    }
+
+    /* ══════════════════════════════════════
+       RANKS (Senator & Centurion)
+    ══════════════════════════════════════ */
+    .ranks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    .rank-card {
+      position: relative;
+      padding: 50px 40px;
+      border: 1px solid rgba(201,168,76,0.25);
+      background: var(--dark-panel);
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .rank-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .rank-card:hover {
+      border-color: rgba(201,168,76,0.55);
+      transform: translateY(-4px);
+    }
+    .rank-card.crimson-card::before {
+      background: linear-gradient(90deg, transparent, var(--crimson), transparent);
+    }
+    .rank-card.crimson-card:hover { border-color: rgba(139,26,26,0.7); }
+
+    .rank-icon {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 15px rgba(201,168,76,0.4));
+    }
+    .rank-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .rank-latin {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 24px;
+    }
+    .rank-desc {
+      color: var(--parchment);
+      opacity: 0.88;
+      margin-bottom: 30px;
+    }
+
+    .rank-perks {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .rank-perks li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      color: var(--marble);
+    }
+    .perk-icon {
+      color: var(--gold);
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .rank-card.crimson-card .perk-icon { color: #D45555; }
+
+    .rank-badge {
+      position: absolute;
+      top: 20px; right: 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold-dim);
+    }
+    .rank-card.crimson-card .rank-badge {
+      border-color: var(--crimson);
+      color: var(--crimson);
+    }
+
+    /* ══════════════════════════════════════
+       DOCTRINA (Kurallar)
+    ══════════════════════════════════════ */
+    .doctrina-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .doctrina-card {
+      padding: 36px 28px;
+      border: 1px solid rgba(201,168,76,0.15);
+      background: linear-gradient(135deg, rgba(26,17,8,0.8), rgba(13,9,6,0.95));
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .doctrina-card:hover { border-color: rgba(201,168,76,0.4); }
+    .doctrina-card::after {
+      content: attr(data-num);
+      position: absolute;
+      top: -16px; right: 20px;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.85rem;
+      color: var(--gold);
+      background: var(--dark-panel);
+      padding: 2px 10px;
+      border: 1px solid rgba(201,168,76,0.2);
+    }
+    .doctrina-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .doctrina-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+    .doctrina-text {
+      font-size: 0.9rem;
+      color: var(--marble);
+      opacity: 0.85;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════
+       AUXILIUM (Destek)
+    ══════════════════════════════════════ */
+    .auxilium-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+    .auxilium-card {
+      display: flex;
+      gap: 24px;
+      padding: 32px 30px;
+      border: 1px solid rgba(201,168,76,0.15);
+      background: var(--dark-panel);
+      align-items: flex-start;
+      transition: border-color 0.3s;
+    }
+    .auxilium-card:hover { border-color: rgba(201,168,76,0.4); }
+    .aux-icon {
+      font-size: 2.4rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .aux-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .aux-text {
+      font-size: 0.9rem;
+      color: var(--marble);
+      opacity: 0.85;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════
+       FOEDUS (İttifak ilkeleri)
+    ══════════════════════════════════════ */
+    .foedus-quote {
+      text-align: center;
+      padding: 80px 20px;
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .foedus-quote blockquote {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 3.5vw, 2rem);
+      color: var(--ivory);
+      line-height: 1.6;
+      position: relative;
+    }
+    .foedus-quote blockquote::before,
+    .foedus-quote blockquote::after {
+      font-family: 'Cinzel Decorative', serif;
+      font-style: normal;
+      font-size: 5rem;
+      color: var(--gold-dim);
+      opacity: 0.3;
+      line-height: 0;
+      position: absolute;
+    }
+    .foedus-quote blockquote::before { content: '"'; top: 30px; left: -20px; }
+    .foedus-quote blockquote::after  { content: '"'; bottom: -10px; right: -10px; }
+    .foedus-attribution {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-top: 28px;
+      display: block;
+    }
+
+    /* ══════════════════════════════════════
+       RECRUIT (Katıl)
+    ══════════════════════════════════════ */
+    .recruit-section {
+      text-align: center;
+      padding: 100px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .recruit-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(139,26,26,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .recruit-inner {
+      position: relative;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .recruit-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.8rem, 5vw, 3.5rem);
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .recruit-sub {
+      font-size: 1.1rem;
+      color: var(--parchment);
+      opacity: 0.85;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      background: var(--dark-panel);
+      border-top: 1px solid rgba(201,168,76,0.15);
+      padding: 50px 20px 30px;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .footer-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 30px;
+      display: block;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      list-style: none;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .footer-links a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: var(--gold-dim);
+      opacity: 0.5;
+    }
+    .footer-spqr {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.1rem;
+      color: var(--crimson);
+      letter-spacing: 0.5em;
+      margin-top: 20px;
+      display: block;
+      opacity: 0.6;
+    }
+
+    /* ══════════════════════════════════════
+       ROMAN COLUMN DECORATION
+    ══════════════════════════════════════ */
+    .column-deco {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      margin: 0 auto 60px;
+      opacity: 0.12;
+      pointer-events: none;
+      user-select: none;
+    }
+    .col-svg { fill: var(--gold); }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 768px) {
+      #historia {
+        grid-template-columns: 1fr;
+        gap: 50px;
+      }
+      .historia-emblem { order: -1; }
+      .ranks-grid { grid-template-columns: 1fr; }
+      .doctrina-grid { grid-template-columns: 1fr; }
+      .auxilium-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .stat-divider { display: none; }
+      nav { display: none; }
+    }
+
+    /* ══════════════════════════════════════
+       SCROLL REVEAL
+    ══════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="#">🦅 PAX ROMA</a>
+      <ul class="nav-links">
+        <li><a href="#historia">Historia</a></li>
+        <li><a href="#ordines">Ordines</a></li>
+        <li><a href="#doctrina">Doctrina</a></li>
+        <li><a href="#auxilium">Auxilium</a></li>
+        <li><a href="#recruit">Katıl</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="stars" id="stars"></div>
+
+    <span class="hero-subtitle-top">Ogame İttifakı · Evren 1</span>
+
+    <div class="hero-rule"></div>
+
+    <div class="hero-eagle">🦅</div>
+
+    <h1 class="hero-title">PAX ROMA</h1>
+
+    <div class="hero-rule"></div>
+
+    <span class="hero-latin">Senatus Populusque Romanus · Per Astra Ad Gloria</span>
+
+    <p class="hero-motto">
+      Yıldızlar arasında da Roma'nın barışı hüküm sürer.<br/>
+      Güç değil, nizam; savaş değil, <em>pax</em>.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#recruit" class="btn"><span>Legionlara Katıl</span></a>
+      <a href="#ordines" class="btn btn-crimson"><span>Rütbelerimiz</span></a>
+    </div>
+  </header>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Yıldız Sistemi</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">II</span>
+        <span class="stat-label">Şerefli Rütbe</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">SPQR</span>
+        <span class="stat-label">Roma'nın Bayrağı</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">I</span>
+        <span class="stat-label">İmparatorluk</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORIA -->
+  <div id="historia">
+    <div class="historia-text reveal">
+      <span class="overline">Historia — Kökenimiz</span>
+      <h2>Roma Galaksiye<br/>Taştı</h2>
+      <p>
+        Bir zamanlar imparatorluğun sınırları yalnızca toprak ve denizlerdi.
+        Artık sınırlarımız <em>ışık yıllarıyla</em> ölçülüyor.
+        PAX ROMA, kadim Roma'nın ruhunu galaksinin derinliklerine taşımak
+        için kuruldu.
+      </p>
+      <p>
+        Biz rakamlarla değil, <em>onurla</em> büyürüz.
+        Her üye bir legioner; her legioner bir kardeş.
+        Savaşta omuz omuza, barışta sofra sofrasına.
+      </p>
+      <p>
+        Senatonun bilgeliği ve Centurionların kılıcı bir arada —
+        <em>Roma'nın dengesi korunur</em>.
+      </p>
+      <a href="#ordines" class="btn" style="display:inline-block;margin-top:10px;"><span>Rütbeleri Keşfet</span></a>
+    </div>
+    <div class="historia-emblem reveal">
+      <div class="emblem-ring"></div>
+      <div class="emblem-ring"></div>
+      <div class="emblem-core">🦅</div>
+    </div>
+  </div>
+
+  <!-- FOEDUS QUOTE -->
+  <div class="foedus-quote reveal">
+    <blockquote>
+      Galaksiyi fethetmek değil, ona düzen getirmek için buradayız.
+      Roma barışı — evrenin her köşesinde.
+    </blockquote>
+    <span class="foedus-attribution">— PAX ROMA Kurucu Belgesi, M.S. 2024</span>
+  </div>
+
+  <!-- ORDINES (Ranks) -->
+  <section id="ordines">
+    <div class="section-header reveal">
+      <span class="section-overline">Ordo — Sınıf Sistemi</span>
+      <h2 class="section-title">Rütbeler &amp; Unvanlar</h2>
+      <div class="section-divider"><div class="divider-gem"></div></div>
+      <p style="color:var(--parchment);opacity:.8;max-width:560px;margin:0 auto;">
+        Roma iki sütun üzerinde yükselir: bilgelik ve güç.
+        İki rütbemiz bu dengeyi simgeler.
+      </p>
+    </div>
+    <div class="ranks-grid">
+
+      <!-- SENATOR -->
+      <div class="rank-card reveal">
+        <span class="rank-badge">Sivil Rütbe</span>
+        <span class="rank-icon">🏛️</span>
+        <h3 class="rank-name">Senator</h3>
+        <span class="rank-latin">Senatus — Meclis Üyesi</span>
+        <p class="rank-desc">
+          Senatörler Roma'nın akıl ve strateji çarklarıdır.
+          Devlet işlerini yönetir, ittifak kararlarında söz sahibi olur,
+          yeni gelenler için rehber konumunda bulunurlar.
+          Toga giyen bu onurlu üyeler, bilgelikleriyle imparatorluğu ayakta tutar.
+        </p>
+        <ul class="rank-perks">
+          <li><span class="perk-icon">⚖️</span><span>İttifak oylamalarında tam oy hakkı</span></li>
+          <li><span class="perk-icon">📜</span><span>Stratejik karar süreçlerine katılım</span></li>
+          <li><span class="perk-icon">🤝</span><span>Yeni üyeleri ittifaka yönlendirme yetkisi</span></li>
+          <li><span class="perk-icon">📦</span><span>Kaynak paylaşım havuzuna erişim</span></li>
+          <li><span class="perk-icon">🛡️</span><span>İttifak saldırı uyarı ağı</span></li>
+        </ul>
+      </div>
+
+      <!-- CENTURION -->
+      <div class="rank-card crimson-card reveal">
+        <span class="rank-badge">Askeri Rütbe</span>
+        <span class="rank-icon">⚔️</span>
+        <h3 class="rank-name">Centurion</h3>
+        <span class="rank-latin">Centurio — Yüzbaşı</span>
+        <p class="rank-desc">
+          Centurionlar ateş ve demirden yoğrulmuştur.
+          Savaş koordinasyonunun omurgası, düşman saldırılarına karşı
+          ilk yanıt kuvveti. Her Centurion yüz savaşçıyı temsil eder;
+          her emri bir Roma yasası gibi uygulanır.
+        </p>
+        <ul class="rank-perks">
+          <li><span class="perk-icon">⚔️</span><span>Savaş koordinasyon kanallarına tam erişim</span></li>
+          <li><span class="perk-icon">🎯</span><span>Ortak saldırı operasyonlarına liderlik</span></li>
+          <li><span class="perk-icon">🛡️</span><span>Öncelikli savunma desteği ve filo yardımı</span></li>
+          <li><span class="perk-icon">🏆</span><span>Savaş başarı rozetleri ve liderlik tablosu</span></li>
+          <li><span class="perk-icon">🚀</span><span>Hızlandırılmış filo destek protokolü</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DOCTRINA (Kurallar) -->
+  <section id="doctrina" style="background:var(--dark-panel);max-width:100%;padding:100px 20px;">
+    <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-header reveal">
+      <span class="section-overline">Lex et Ordo — Kanun ve Düzen</span>
+      <h2 class="section-title">Doctrina Romana</h2>
+      <div class="section-divider"><div class="divider-gem"></div></div>
+      <p style="color:var(--parchment);opacity:.8;max-width:560px;margin:0 auto;">
+        Roma yasasız olmaz. Şu kurallar ittifakın temel taşlarıdır;
+        ihlal edenler sürgüne gönderilir.
+      </p>
+    </div>
+    <div class="doctrina-grid">
+      <div class="doctrina-card reveal" data-num="I">
+        <span class="doctrina-icon">🏛️</span>
+        <div class="doctrina-title">Fides — Sadakat</div>
+        <p class="doctrina-text">İttifak üyelerine ihanet etmek Roma hukukunda ölüm cezasını gerektirirdi. Biz sürgünle yetiniyoruz. Sadakatsizliğe sıfır tolerans.</p>
+      </div>
+      <div class="doctrina-card reveal" data-num="II">
+        <span class="doctrina-icon">⚔️</span>
+        <div class="doctrina-title">Disciplina — Disiplin</div>
+        <p class="doctrina-text">Savaş kararları Senato ve Centurionların ortak mutabakatıyla alınır. Tek başına büyük saldırılar yasaktır. Güç birlikte kullanılır.</p>
+      </div>
+      <div class="doctrina-card reveal" data-num="III">
+        <span class="doctrina-icon">🤝</span>
+        <div class="doctrina-title">Concordia — Uyum</div>
+        <p class="doctrina-text">Üyeler arası anlaşmazlıklar Senato'ya taşınır. Ittifak içi saldırı kesinlikle yasaktır. Roma birliğini korur.</p>
+      </div>
+      <div class="doctrina-card reveal" data-num="IV">
+        <span class="doctrina-icon">📢</span>
+        <div class="doctrina-title">Communicatio — İletişim</div>
+        <p class="doctrina-text">Düzenli savaş raporları zorunludur. Savunma çağrılarına 12 saat içinde yanıt verilmesi beklenir. Sessizlik kabul edilmez.</p>
+      </div>
+      <div class="doctrina-card reveal" data-num="V">
+        <span class="doctrina-icon">📈</span>
+        <div class="doctrina-title">Progressus — İlerleme</div>
+        <p class="doctrina-text">Her üye ittifakın büyümesine katkıda bulunmakla yükümlüdür. Araştırma paylaşımı ve yeni üye yönlendirmesi teşvik edilir.</p>
+      </div>
+      <div class="doctrina-card reveal" data-num="VI">
+        <span class="doctrina-icon">🌟</span>
+        <div class="doctrina-title">Honor — Şeref</div>
+        <p class="doctrina-text">Roma adını lekeleyecek hiçbir eylem kabul edilmez. Galakside ne yaparsan yap, PAX ROMA bayrağını şereflendirerek yap.</p>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- AUXILIUM (Destek) -->
+  <section id="auxilium">
+    <div class="section-header reveal">
+      <span class="section-overline">Auxilium — Yardım ve Destek</span>
+      <h2 class="section-title">Ne Sunuyoruz?</h2>
+      <div class="section-divider"><div class="divider-gem"></div></div>
+    </div>
+    <div class="auxilium-grid">
+      <div class="auxilium-card reveal">
+        <span class="aux-icon">🛸</span>
+        <div>
+          <div class="aux-title">Filo Desteği</div>
+          <p class="aux-text">Saldırı altındayken yalnız değilsin. Centurionlar ve Senatörler anında toplanarak düşman filolarını püskürtür. Roma, birini asla yalnız bırakmaz.</p>
+        </div>
+      </div>
+      <div class="auxilium-card reveal">
+        <span class="aux-icon">⚗️</span>
+        <div>
+          <div class="aux-title">Kaynak & Araştırma Paylaşımı</div>
+          <p class="aux-text">İttifak havuzundan kaynak talep edebilirsin. Ortak araştırma projeleri ile tüm ittifak daha hızlı gelişir. Zenginlik paylaşıldıkça çoğalır.</p>
+        </div>
+      </div>
+      <div class="auxilium-card reveal">
+        <span class="aux-icon">📡</span>
+        <div>
+          <div class="aux-title">İstihbarat Ağı</div>
+          <p class="aux-text">Geniş ittifak radarı sayesinde tehditler erkenden tespit edilir. Koordineli savunma pozisyonları, düşman saldırılarını boşa çıkarır.</p>
+        </div>
+      </div>
+      <div class="auxilium-card reveal">
+        <span class="aux-icon">📜</span>
+        <div>
+          <div class="aux-title">Rehberlik & Strateji</div>
+          <p class="aux-text">Yeni başlayanlar için deneyimli Senatörler her zaman hazır. Gemi kurulumu, kaynak yönetimi ve saldırı planlamasında birebir danışmanlık.</p>
+        </div>
+      </div>
+      <div class="auxilium-card reveal">
+        <span class="aux-icon">🏆</span>
+        <div>
+          <div class="aux-title">Turnuva & Etkinlikler</div>
+          <p class="aux-text">Aylık ittifak içi turnuvalar, kazananlar için özel unvan ve ödüller. Rekabet ruhunu canlı tut, legionlar arasında şöhretini yayıklaştır.</p>
+        </div>
+      </div>
+      <div class="auxilium-card reveal">
+        <span class="aux-icon">🌐</span>
+        <div>
+          <div class="aux-title">Diplomatik İlişkiler</div>
+          <p class="aux-text">Senatörler diğer ittifaklarla diplomatik anlaşmalar yürütür. Pax'ı sadece içeride değil, galaksinin genelinde tesis etmek birincil hedefimizdir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECRUIT -->
+  <div class="recruit-section" id="recruit">
+    <div class="recruit-inner">
+      <div class="section-divider reveal" style="margin-bottom:40px;"><div class="divider-gem"></div></div>
+      <h2 class="recruit-title reveal">Roma Seni<br/>Çağırıyor</h2>
+      <p class="recruit-sub reveal">
+        İmparatorluğun kapıları açık, ama Roma her kapıyı çalmana izin vermez.
+        Eğer onurlu savaşmayı ve kardeşlik içinde büyümeyi seçiyorsan —
+        <strong style="color:var(--gold)">bu çağrı sana.</strong>
+      </p>
+      <div class="hero-cta reveal">
+        <a href="https://ogame.org" target="_blank" rel="noopener" class="btn"><span>🎮 Ogame'de Bul</span></a>
+        <a href="mailto:paxroma@oyun.tr" class="btn btn-crimson"><span>📜 Başvur</span></a>
+      </div>
+      <p class="reveal" style="margin-top:40px;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--gold-dim);text-transform:uppercase;">
+        In Nomine Aquilae · PAX ROMANA AETERNUM
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo">PAX ROMA</span>
+    <span class="footer-sub">Ogame İttifakı · Galaksinin Efendileri</span>
+    <ul class="footer-links">
+      <li><a href="#historia">Historia</a></li>
+      <li><a href="#ordines">Ordines</a></li>
+      <li><a href="#doctrina">Doctrina</a></li>
+      <li><a href="#auxilium">Auxilium</a></li>
+      <li><a href="#recruit">Katıl</a></li>
+    </ul>
+    <p class="footer-copy">© MMXXIV PAX ROMA — Tüm Galaksiler Saklıdır</p>
+    <span class="footer-spqr">S · P · Q · R</span>
+  </footer>
+
+  <script>
+    // ── STAR FIELD
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.cssText = `
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        --d:${3+Math.random()*6}s;
+        --o:${0.3+Math.random()*0.7};
+        animation-delay:${Math.random()*6}s;
+        width:${Math.random()<0.2?3:2}px;
+        height:${Math.random()<0.2?3:2}px;
+      `;
+      starsEl.appendChild(s);
+    }
+
+    // ── SCROLL REVEAL
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          e.target.style.transitionDelay = `${(i % 3) * 0.1}s`;
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => io.observe(r));
+  </script>
+</body>
+</html>
